@@ -1,24 +1,65 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
   MapPin, BedDouble, Maximize, Brain, TrendingUp, Eye, ArrowLeft,
-  Phone, MessageCircle, CheckCircle, Share2,
+  Phone, MessageCircle, CheckCircle, Share2, IndianRupee, Calendar, Sofa,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import PropertyCard from "@/components/PropertyCard";
-import { properties, formatPrice, formatArea } from "@/lib/mockData";
+import { seedProperties, formatPrice, formatArea, type Property } from "@/lib/mockData";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const PropertyDetail = () => {
   const { id } = useParams();
   const { toast } = useToast();
-  const property = properties.find((p) => p.id === id);
+  const { user } = useAuth();
+  const [property, setProperty] = useState<Property | null>(null);
+  const [similar, setSimilar] = useState<Property[]>([]);
   const [activeImg, setActiveImg] = useState(0);
   const [leadSent, setLeadSent] = useState(false);
   const [leadForm, setLeadForm] = useState({ name: "", phone: "", message: "" });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProperty = async () => {
+      // Try DB first
+      const { data } = await supabase.from("properties").select("*").eq("id", id!).maybeSingle();
+      if (data) {
+        const mapped: Property = {
+          ...data,
+          amenities: Array.isArray(data.amenities) ? data.amenities as string[] : [],
+          images: data.images || [],
+        };
+        setProperty(mapped);
+
+        // Similar
+        const { data: simData } = await supabase
+          .from("properties")
+          .select("*")
+          .neq("id", id!)
+          .or(`city.eq.${data.city},property_type.eq.${data.property_type}`)
+          .eq("status", "active")
+          .limit(3);
+        setSimilar((simData || []).map((p) => ({ ...p, amenities: Array.isArray(p.amenities) ? p.amenities as string[] : [], images: p.images || [] })));
+      } else {
+        // Fallback to seed
+        const seed = seedProperties.find((p) => p.id === id);
+        setProperty(seed || null);
+        if (seed) {
+          setSimilar(seedProperties.filter((p) => p.id !== seed.id && (p.city === seed.city || p.property_type === seed.property_type)).slice(0, 3));
+        }
+      }
+      setLoading(false);
+    };
+    fetchProperty();
+  }, [id]);
+
+  if (loading) return <div className="container py-20 text-center text-muted-foreground">Loading...</div>;
 
   if (!property) {
     return (
@@ -29,49 +70,45 @@ const PropertyDetail = () => {
     );
   }
 
-  const similar = properties.filter(
-    (p) => p.id !== property.id && (p.city === property.city || p.propertyType === property.propertyType)
-  ).slice(0, 3);
+  const isRental = property.listing_type === "rent";
 
-  const handleLead = (e: React.FormEvent) => {
+  const handleLead = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (user && !property.id.startsWith("seed-")) {
+      await supabase.from("leads").insert({
+        property_id: property.id,
+        buyer_id: user.id,
+        message: leadForm.message,
+        contact_phone: leadForm.phone,
+      });
+    }
     setLeadSent(true);
     toast({ title: "Inquiry Sent!", description: "The seller will get back to you soon." });
   };
 
   return (
     <div className="container py-8">
-      {/* Back */}
       <Link to="/properties" className="mb-6 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
-        <ArrowLeft className="h-4 w-4" />
-        Back to properties
+        <ArrowLeft className="h-4 w-4" />Back to properties
       </Link>
 
       <div className="grid gap-8 lg:grid-cols-3">
-        {/* Main content */}
         <div className="lg:col-span-2 space-y-6">
           {/* Gallery */}
           <div className="space-y-3">
             <div className="overflow-hidden rounded-xl">
-              <img
-                src={property.images[activeImg]}
-                alt={property.title}
-                className="aspect-[16/10] w-full object-cover"
-              />
+              <img src={property.images[activeImg] || "/placeholder.svg"} alt={property.title} className="aspect-[16/10] w-full object-cover" />
             </div>
-            <div className="flex gap-2">
-              {property.images.map((img, i) => (
-                <button
-                  key={i}
-                  onClick={() => setActiveImg(i)}
-                  className={`overflow-hidden rounded-lg border-2 transition-all ${
-                    i === activeImg ? "border-accent" : "border-transparent opacity-60 hover:opacity-100"
-                  }`}
-                >
-                  <img src={img} alt="" className="h-16 w-24 object-cover" />
-                </button>
-              ))}
-            </div>
+            {property.images.length > 1 && (
+              <div className="flex gap-2">
+                {property.images.map((img, i) => (
+                  <button key={i} onClick={() => setActiveImg(i)}
+                    className={`overflow-hidden rounded-lg border-2 transition-all ${i === activeImg ? "border-accent" : "border-transparent opacity-60 hover:opacity-100"}`}>
+                    <img src={img} alt="" className="h-16 w-24 object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Details */}
@@ -79,22 +116,25 @@ const PropertyDetail = () => {
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <div className="flex flex-wrap gap-2 mb-2">
-                  <Badge className="bg-accent text-accent-foreground border-0 capitalize">{property.propertyType}</Badge>
+                  <Badge className="bg-accent text-accent-foreground border-0 capitalize">{property.property_type}</Badge>
+                  <Badge className={`border-0 ${isRental ? "bg-success text-success-foreground" : "bg-ai text-ai-foreground"}`}>
+                    {isRental ? "For Rent" : "For Sale"}
+                  </Badge>
                   <Badge variant="outline">{property.status}</Badge>
-                  {property.featured && <Badge className="bg-ai text-ai-foreground border-0">⭐ Featured</Badge>}
+                  {property.featured && <Badge className="bg-warning text-warning-foreground border-0">⭐ Featured</Badge>}
                 </div>
                 <h1 className="font-display text-3xl font-bold text-foreground">{property.title}</h1>
                 <p className="mt-1 flex items-center gap-1 text-muted-foreground">
-                  <MapPin className="h-4 w-4" />
-                  {property.address}, {property.locality}, {property.city}
+                  <MapPin className="h-4 w-4" />{property.address}, {property.locality}, {property.city}
                 </p>
               </div>
               <div className="text-right">
-                <p className="font-display text-3xl font-bold text-foreground">{formatPrice(property.price)}</p>
-                {property.predictedPrice && (
+                <p className="font-display text-3xl font-bold text-foreground">
+                  {formatPrice(property.price)}{isRental ? "/mo" : ""}
+                </p>
+                {property.predicted_price && (
                   <p className="flex items-center gap-1 text-sm text-ai justify-end">
-                    <Brain className="h-3.5 w-3.5" />
-                    AI: {formatPrice(property.predictedPrice)}
+                    <Brain className="h-3.5 w-3.5" />AI: {formatPrice(property.predicted_price)}{isRental ? "/mo" : ""}
                   </p>
                 )}
               </div>
@@ -105,52 +145,61 @@ const PropertyDetail = () => {
               {property.bhk > 0 && (
                 <div className="flex items-center gap-2">
                   <BedDouble className="h-5 w-5 text-accent" />
-                  <div>
-                    <p className="text-xs text-muted-foreground">Bedrooms</p>
-                    <p className="font-semibold">{property.bhk} BHK</p>
-                  </div>
+                  <div><p className="text-xs text-muted-foreground">Bedrooms</p><p className="font-semibold">{property.bhk} BHK</p></div>
                 </div>
               )}
               <div className="flex items-center gap-2">
                 <Maximize className="h-5 w-5 text-accent" />
-                <div>
-                  <p className="text-xs text-muted-foreground">Area</p>
-                  <p className="font-semibold">{formatArea(property.areaSqft)}</p>
-                </div>
+                <div><p className="text-xs text-muted-foreground">Area</p><p className="font-semibold">{formatArea(property.area_sqft)}</p></div>
               </div>
               <div className="flex items-center gap-2">
                 <Eye className="h-5 w-5 text-accent" />
-                <div>
-                  <p className="text-xs text-muted-foreground">Views</p>
-                  <p className="font-semibold">{property.views}</p>
-                </div>
+                <div><p className="text-xs text-muted-foreground">Views</p><p className="font-semibold">{property.views_count}</p></div>
               </div>
-              {property.aiScore && (
+              {property.ai_score && (
                 <div className="flex items-center gap-2">
                   <TrendingUp className="h-5 w-5 text-ai" />
-                  <div>
-                    <p className="text-xs text-muted-foreground">AI Score</p>
-                    <p className="font-semibold">{property.aiScore}%</p>
-                  </div>
+                  <div><p className="text-xs text-muted-foreground">AI Score</p><p className="font-semibold">{property.ai_score}%</p></div>
+                </div>
+              )}
+              {isRental && property.furnishing_status && (
+                <div className="flex items-center gap-2">
+                  <Sofa className="h-5 w-5 text-accent" />
+                  <div><p className="text-xs text-muted-foreground">Furnishing</p><p className="font-semibold capitalize">{property.furnishing_status}</p></div>
                 </div>
               )}
             </div>
+
+            {/* Rental details */}
+            {isRental && (
+              <div className="mt-4 flex flex-wrap gap-4 rounded-xl border p-4">
+                {property.deposit_amount && (
+                  <div className="flex items-center gap-2">
+                    <IndianRupee className="h-5 w-5 text-accent" />
+                    <div><p className="text-xs text-muted-foreground">Deposit</p><p className="font-semibold">{formatPrice(property.deposit_amount)}</p></div>
+                  </div>
+                )}
+                {property.lease_duration_months && (
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-5 w-5 text-accent" />
+                    <div><p className="text-xs text-muted-foreground">Lease</p><p className="font-semibold">{property.lease_duration_months} months</p></div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
-          {/* Description */}
           <div>
             <h3 className="font-display text-xl font-semibold mb-3">Description</h3>
             <p className="text-muted-foreground leading-relaxed">{property.description}</p>
           </div>
 
-          {/* Amenities */}
           <div>
             <h3 className="font-display text-xl font-semibold mb-3">Amenities</h3>
             <div className="flex flex-wrap gap-2">
               {property.amenities.map((a) => (
                 <Badge key={a} variant="secondary" className="gap-1 px-3 py-1.5">
-                  <CheckCircle className="h-3 w-3 text-success" />
-                  {a}
+                  <CheckCircle className="h-3 w-3 text-success" />{a}
                 </Badge>
               ))}
             </div>
@@ -159,64 +208,45 @@ const PropertyDetail = () => {
 
         {/* Sidebar */}
         <div className="space-y-6">
-          {/* Contact */}
           <div className="rounded-xl border bg-card p-6 shadow-card sticky top-24">
-            <h3 className="font-display text-lg font-semibold mb-1">Contact Seller</h3>
-            <p className="text-sm text-muted-foreground mb-4">Listed by {property.ownerName}</p>
+            <h3 className="font-display text-lg font-semibold mb-1">
+              {isRental ? "Apply for Rent" : "Contact Seller"}
+            </h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              {isRental ? "Interested in renting? Send your details." : "Send an inquiry to the property owner."}
+            </p>
 
             {leadSent ? (
               <div className="animate-scale-in rounded-lg bg-success/10 border border-success/20 p-4 text-center">
                 <CheckCircle className="h-8 w-8 text-success mx-auto mb-2" />
                 <p className="font-semibold text-foreground">Inquiry Sent!</p>
-                <p className="text-sm text-muted-foreground">The seller will contact you soon.</p>
+                <p className="text-sm text-muted-foreground">The owner will contact you soon.</p>
               </div>
             ) : (
               <form onSubmit={handleLead} className="space-y-3">
-                <Input
-                  placeholder="Your Name"
-                  value={leadForm.name}
-                  onChange={(e) => setLeadForm({ ...leadForm, name: e.target.value })}
-                  required
-                />
-                <Input
-                  placeholder="Phone Number"
-                  value={leadForm.phone}
-                  onChange={(e) => setLeadForm({ ...leadForm, phone: e.target.value })}
-                  required
-                />
-                <Textarea
-                  placeholder="I'm interested in this property..."
-                  value={leadForm.message}
-                  onChange={(e) => setLeadForm({ ...leadForm, message: e.target.value })}
-                  rows={3}
-                />
+                <Input placeholder="Your Name" value={leadForm.name} onChange={(e) => setLeadForm({ ...leadForm, name: e.target.value })} required />
+                <Input placeholder="Phone Number" value={leadForm.phone} onChange={(e) => setLeadForm({ ...leadForm, phone: e.target.value })} required />
+                <Textarea placeholder={isRental ? "I'd like to rent this property..." : "I'm interested in this property..."} value={leadForm.message} onChange={(e) => setLeadForm({ ...leadForm, message: e.target.value })} rows={3} />
                 <Button type="submit" className="w-full gap-2">
-                  <MessageCircle className="h-4 w-4" />
-                  Send Inquiry
+                  <MessageCircle className="h-4 w-4" />{isRental ? "Apply for Rent" : "Send Inquiry"}
                 </Button>
                 <Button type="button" variant="outline" className="w-full gap-2">
-                  <Phone className="h-4 w-4" />
-                  Call Seller
+                  <Phone className="h-4 w-4" />Call Owner
                 </Button>
               </form>
             )}
-
             <Button variant="ghost" className="mt-3 w-full gap-2 text-muted-foreground">
-              <Share2 className="h-4 w-4" />
-              Share Property
+              <Share2 className="h-4 w-4" />Share Property
             </Button>
           </div>
         </div>
       </div>
 
-      {/* Similar */}
       {similar.length > 0 && (
         <div className="mt-16">
           <h2 className="font-display text-2xl font-bold mb-6">Similar Properties</h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {similar.map((p) => (
-              <PropertyCard key={p.id} property={p} />
-            ))}
+            {similar.map((p) => <PropertyCard key={p.id} property={p} />)}
           </div>
         </div>
       )}

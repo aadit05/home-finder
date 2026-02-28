@@ -1,11 +1,14 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Home, Search, Brain, Menu, X, Building2 } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Home, Search, Brain, Menu, X, Building2, Plus, Shield, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, userRole, signOut } = useAuth();
 
   const links = [
     { to: "/", label: "Home", icon: Home },
@@ -13,7 +16,16 @@ const Navbar = () => {
     { to: "/ai-estimator", label: "AI Estimator", icon: Brain },
   ];
 
+  if (userRole === "admin") {
+    links.push({ to: "/admin", label: "Admin", icon: Shield });
+  }
+
   const isActive = (path: string) => location.pathname === path;
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   return (
     <nav className="sticky top-0 z-50 border-b bg-card/80 backdrop-blur-lg">
@@ -23,7 +35,7 @@ const Navbar = () => {
             <Building2 className="h-5 w-5 text-primary-foreground" />
           </div>
           <span className="font-display text-xl font-bold text-foreground">
-            Nest<span className="text-gradient-accent">AI</span>
+            Nest<span className="text-gradient-accent">IQ</span>
           </span>
         </Link>
 
@@ -31,11 +43,7 @@ const Navbar = () => {
         <div className="hidden items-center gap-1 md:flex">
           {links.map((l) => (
             <Link key={l.to} to={l.to}>
-              <Button
-                variant={isActive(l.to) ? "default" : "ghost"}
-                size="sm"
-                className="gap-2"
-              >
+              <Button variant={isActive(l.to) ? "default" : "ghost"} size="sm" className="gap-2">
                 <l.icon className="h-4 w-4" />
                 {l.label}
               </Button>
@@ -50,7 +58,26 @@ const Navbar = () => {
               Search
             </Button>
           </Link>
-          <Button size="sm">Post Property</Button>
+          {user ? (
+            <>
+              <Link to="/post-property">
+                <Button size="sm" className="gap-2">
+                  <Plus className="h-4 w-4" />
+                  Post Property
+                </Button>
+              </Link>
+              <Button variant="ghost" size="sm" onClick={handleSignOut} className="gap-2">
+                <LogOut className="h-4 w-4" />
+              </Button>
+            </>
+          ) : (
+            <Link to="/auth">
+              <Button size="sm" className="gap-2">
+                <User className="h-4 w-4" />
+                Sign In
+              </Button>
+            </Link>
+          )}
         </div>
 
         {/* Mobile toggle */}
@@ -71,7 +98,20 @@ const Navbar = () => {
                 </Button>
               </Link>
             ))}
-            <Button className="mt-2 w-full">Post Property</Button>
+            {user ? (
+              <>
+                <Link to="/post-property" onClick={() => setOpen(false)}>
+                  <Button className="mt-2 w-full gap-2"><Plus className="h-4 w-4" />Post Property</Button>
+                </Link>
+                <Button variant="ghost" className="w-full justify-start gap-2" onClick={() => { handleSignOut(); setOpen(false); }}>
+                  <LogOut className="h-4 w-4" />Sign Out
+                </Button>
+              </>
+            ) : (
+              <Link to="/auth" onClick={() => setOpen(false)}>
+                <Button className="mt-2 w-full gap-2"><User className="h-4 w-4" />Sign In</Button>
+              </Link>
+            )}
           </div>
         </div>
       )}
