@@ -1,13 +1,15 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, Brain, TrendingUp, Shield, ArrowRight, Building2, MapPin } from "lucide-react";
+import { Search, Brain, TrendingUp, Shield, ArrowRight, Building2, MapPin, Home, Key } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PropertyCard from "@/components/PropertyCard";
 import AIEstimatorWidget from "@/components/AIEstimatorWidget";
-import { properties, cities } from "@/lib/mockData";
+import { seedProperties, cities } from "@/lib/mockData";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const Index = () => {
-  const featured = properties.filter((p) => p.featured);
+  const [listingMode, setListingMode] = useState<"sale" | "rent">("sale");
+  const featured = seedProperties.filter((p) => p.featured && p.listing_type === listingMode);
 
   return (
     <div>
@@ -27,17 +29,39 @@ const Index = () => {
             <p className="mt-6 text-lg text-primary-foreground/80 leading-relaxed max-w-lg">
               Discover properties with AI-driven price predictions, smart recommendations, and advanced market analytics.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/properties">
+
+            {/* Buy/Rent Toggle */}
+            <div className="mt-8 flex items-center gap-4">
+              <div className="flex rounded-xl bg-primary-foreground/10 p-1 backdrop-blur-sm">
+                <button
+                  onClick={() => setListingMode("sale")}
+                  className={`flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold transition-all ${
+                    listingMode === "sale" ? "bg-accent text-accent-foreground shadow-lg" : "text-primary-foreground/70 hover:text-primary-foreground"
+                  }`}
+                >
+                  <Home className="h-4 w-4" />Buy
+                </button>
+                <button
+                  onClick={() => setListingMode("rent")}
+                  className={`flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold transition-all ${
+                    listingMode === "rent" ? "bg-accent text-accent-foreground shadow-lg" : "text-primary-foreground/70 hover:text-primary-foreground"
+                  }`}
+                >
+                  <Key className="h-4 w-4" />Rent
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link to={`/properties?type=${listingMode}`}>
                 <Button size="lg" className="gap-2 bg-accent text-accent-foreground hover:bg-accent/90 font-semibold text-base px-8">
                   <Search className="h-5 w-5" />
-                  Explore Properties
+                  {listingMode === "sale" ? "Browse for Sale" : "Browse for Rent"}
                 </Button>
               </Link>
               <Link to="/ai-estimator">
                 <Button size="lg" variant="outline" className="gap-2 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 text-base px-8">
-                  <Brain className="h-5 w-5" />
-                  AI Estimator
+                  <Brain className="h-5 w-5" />AI Estimator
                 </Button>
               </Link>
             </div>
@@ -67,18 +91,20 @@ const Index = () => {
         <div className="mb-8 flex items-end justify-between">
           <div>
             <p className="text-sm font-medium uppercase tracking-widest text-accent">Handpicked</p>
-            <h2 className="font-display text-3xl font-bold text-foreground mt-1">Featured Properties</h2>
+            <h2 className="font-display text-3xl font-bold text-foreground mt-1">
+              Featured {listingMode === "sale" ? "Sale" : "Rental"} Properties
+            </h2>
           </div>
-          <Link to="/properties">
+          <Link to={`/properties?type=${listingMode}`}>
             <Button variant="ghost" className="gap-1 text-muted-foreground hover:text-accent">
               View All <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
         </div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {featured.map((p) => (
-            <PropertyCard key={p.id} property={p} />
-          ))}
+          {featured.length > 0 ? featured.map((p) => <PropertyCard key={p.id} property={p} />) : (
+            <p className="col-span-full text-center text-muted-foreground py-8">No featured {listingMode} properties yet.</p>
+          )}
         </div>
       </section>
 
@@ -91,7 +117,7 @@ const Index = () => {
           </div>
           <div className="grid gap-6 md:grid-cols-3">
             {[
-              { icon: TrendingUp, title: "Price Prediction", desc: "ML-powered property valuation using market data, location trends, and comparable sales analysis." },
+              { icon: TrendingUp, title: "Price Prediction", desc: "ML-powered property valuation for both sale and rental prices using market data and location trends." },
               { icon: Brain, title: "Smart Recommendations", desc: "Personalized property suggestions based on your preferences, search history, and budget." },
               { icon: Shield, title: "Fraud Detection", desc: "AI-powered listing verification to identify suspicious prices, duplicates, and anomalies." },
             ].map((f) => (
@@ -113,8 +139,8 @@ const Index = () => {
           <p className="text-sm font-medium uppercase tracking-widest text-accent">Explore</p>
           <h2 className="font-display text-3xl font-bold text-foreground mt-1">Popular Cities</h2>
         </div>
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-7">
-          {cities.map((city) => (
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-6">
+          {cities.slice(0, 12).map((city) => (
             <Link
               key={city}
               to={`/properties?city=${city}`}

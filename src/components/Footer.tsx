@@ -10,15 +10,16 @@ const Footer = () => (
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent">
               <Building2 className="h-4 w-4 text-accent-foreground" />
             </div>
-            <span className="font-display text-lg font-bold">NestAI</span>
+            <span className="font-display text-lg font-bold">NestIQ</span>
           </div>
-          <p className="text-sm opacity-70">AI-powered real estate marketplace. Find your dream property with intelligent recommendations and price predictions.</p>
+          <p className="text-sm opacity-70">AI-powered real estate marketplace. Buy, rent, or sell with intelligent predictions and smart recommendations.</p>
         </div>
         <div>
           <h4 className="mb-3 font-display text-sm font-semibold uppercase tracking-wider opacity-70">Explore</h4>
           <div className="flex flex-col gap-2 text-sm">
-            <Link to="/properties" className="opacity-70 hover:opacity-100 transition-opacity">Buy Property</Link>
-            <Link to="/properties" className="opacity-70 hover:opacity-100 transition-opacity">Rent Property</Link>
+            <Link to="/properties?type=sale" className="opacity-70 hover:opacity-100 transition-opacity">Buy Property</Link>
+            <Link to="/properties?type=rent" className="opacity-70 hover:opacity-100 transition-opacity">Rent Property</Link>
+            <Link to="/post-property" className="opacity-70 hover:opacity-100 transition-opacity">Post Property</Link>
             <Link to="/ai-estimator" className="opacity-70 hover:opacity-100 transition-opacity">AI Price Estimator</Link>
           </div>
         </div>
@@ -42,7 +43,7 @@ const Footer = () => (
         </div>
       </div>
       <div className="mt-8 border-t border-primary-foreground/20 pt-6 text-center text-sm opacity-50">
-        © 2026 NestAI. All rights reserved. Powered by AI.
+        © 2026 NestIQ. All rights reserved. Powered by AI.
       </div>
     </div>
   </footer>

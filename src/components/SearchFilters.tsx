@@ -7,6 +7,7 @@ import { cities, propertyTypes, bhkOptions } from "@/lib/mockData";
 
 export interface Filters {
   search: string;
+  listingType: string;
   city: string;
   propertyType: string;
   bhk: string;
@@ -30,6 +31,7 @@ const SearchFilters = ({ filters, onChange }: Props) => {
   const clearAll = () => {
     onChange({
       search: "",
+      listingType: "",
       city: "",
       propertyType: "",
       bhk: "",
@@ -39,12 +41,38 @@ const SearchFilters = ({ filters, onChange }: Props) => {
     });
   };
 
-  const hasFilters = filters.city || filters.propertyType || filters.bhk || filters.minPrice || filters.maxPrice;
+  const hasFilters = filters.city || filters.propertyType || filters.bhk || filters.minPrice || filters.maxPrice || filters.listingType;
 
   return (
     <div className="rounded-xl border bg-card p-4 shadow-card">
-      {/* Search bar */}
+      {/* Buy/Rent Toggle + Search */}
       <div className="flex gap-2">
+        <div className="flex rounded-lg border bg-secondary p-0.5">
+          <button
+            onClick={() => update("listingType", "")}
+            className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+              !filters.listingType ? "bg-card shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            All
+          </button>
+          <button
+            onClick={() => update("listingType", "sale")}
+            className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+              filters.listingType === "sale" ? "bg-card shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Buy
+          </button>
+          <button
+            onClick={() => update("listingType", "rent")}
+            className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+              filters.listingType === "rent" ? "bg-card shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Rent
+          </button>
+        </div>
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -54,17 +82,11 @@ const SearchFilters = ({ filters, onChange }: Props) => {
             className="pl-10"
           />
         </div>
-        <Button
-          variant="outline"
-          onClick={() => setExpanded(!expanded)}
-          className="gap-2"
-        >
+        <Button variant="outline" onClick={() => setExpanded(!expanded)} className="gap-2">
           <SlidersHorizontal className="h-4 w-4" />
           Filters
           {hasFilters && (
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-accent-foreground">
-              !
-            </span>
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-accent-foreground">!</span>
           )}
         </Button>
       </div>
@@ -76,45 +98,24 @@ const SearchFilters = ({ filters, onChange }: Props) => {
             <Select value={filters.city} onValueChange={(v) => update("city", v)}>
               <SelectTrigger><SelectValue placeholder="City" /></SelectTrigger>
               <SelectContent>
-                {cities.map((c) => (
-                  <SelectItem key={c} value={c}>{c}</SelectItem>
-                ))}
+                {cities.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
               </SelectContent>
             </Select>
-
             <Select value={filters.propertyType} onValueChange={(v) => update("propertyType", v)}>
               <SelectTrigger><SelectValue placeholder="Property Type" /></SelectTrigger>
               <SelectContent>
-                {propertyTypes.map((t) => (
-                  <SelectItem key={t} value={t} className="capitalize">{t}</SelectItem>
-                ))}
+                {propertyTypes.map((t) => <SelectItem key={t} value={t} className="capitalize">{t}</SelectItem>)}
               </SelectContent>
             </Select>
-
             <Select value={filters.bhk} onValueChange={(v) => update("bhk", v)}>
               <SelectTrigger><SelectValue placeholder="BHK" /></SelectTrigger>
               <SelectContent>
-                {bhkOptions.map((b) => (
-                  <SelectItem key={b} value={String(b)}>{b} BHK</SelectItem>
-                ))}
+                {bhkOptions.map((b) => <SelectItem key={b} value={String(b)}>{b} BHK</SelectItem>)}
               </SelectContent>
             </Select>
-
-            <Input
-              type="number"
-              placeholder="Min Price (₹)"
-              value={filters.minPrice}
-              onChange={(e) => update("minPrice", e.target.value)}
-            />
-
-            <Input
-              type="number"
-              placeholder="Max Price (₹)"
-              value={filters.maxPrice}
-              onChange={(e) => update("maxPrice", e.target.value)}
-            />
+            <Input type="number" placeholder="Min Price (₹)" value={filters.minPrice} onChange={(e) => update("minPrice", e.target.value)} />
+            <Input type="number" placeholder="Max Price (₹)" value={filters.maxPrice} onChange={(e) => update("maxPrice", e.target.value)} />
           </div>
-
           <div className="mt-3 flex items-center justify-between">
             <Select value={filters.sortBy} onValueChange={(v) => update("sortBy", v)}>
               <SelectTrigger className="w-48"><SelectValue placeholder="Sort By" /></SelectTrigger>
@@ -125,11 +126,9 @@ const SearchFilters = ({ filters, onChange }: Props) => {
                 <SelectItem value="ai-score">AI Score</SelectItem>
               </SelectContent>
             </Select>
-
             {hasFilters && (
               <Button variant="ghost" size="sm" onClick={clearAll} className="gap-1 text-muted-foreground">
-                <X className="h-3 w-3" />
-                Clear all
+                <X className="h-3 w-3" />Clear all
               </Button>
             )}
           </div>
