@@ -35,7 +35,7 @@ const Navbar = () => {
             <Building2 className="h-5 w-5 text-primary-foreground" />
           </div>
           <span className="font-display text-xl font-bold text-foreground">
-            Nest<span className="text-gradient-accent">IQ</span>
+            Apna<span className="text-gradient-accent">Ghar</span>
           </span>
         </Link>
 
