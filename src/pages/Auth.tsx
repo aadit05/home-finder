@@ -57,7 +57,7 @@ const Auth = () => {
             {isLogin ? "Welcome Back" : "Create Account"}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {isLogin ? "Sign in to your NestIQ account" : "Join NestIQ — AI-powered real estate"}
+            {isLogin ? "Sign in to your ApnaGhar account" : "Join ApnaGhar — AI-powered real estate"}
           </p>
         </div>
 

@@ -10,7 +10,7 @@ const Footer = () => (
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent">
               <Building2 className="h-4 w-4 text-accent-foreground" />
             </div>
-            <span className="font-display text-lg font-bold">NestIQ</span>
+            <span className="font-display text-lg font-bold">ApnaGhar</span>
           </div>
           <p className="text-sm opacity-70">AI-powered real estate marketplace. Buy, rent, or sell with intelligent predictions and smart recommendations.</p>
         </div>
@@ -43,7 +43,7 @@ const Footer = () => (
         </div>
       </div>
       <div className="mt-8 border-t border-primary-foreground/20 pt-6 text-center text-sm opacity-50">
-        © 2026 NestIQ. All rights reserved. Powered by AI.
+        © 2026 ApnaGhar. All rights reserved. Powered by AI.
       </div>
     </div>
   </footer>

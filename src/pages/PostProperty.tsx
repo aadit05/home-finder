@@ -158,7 +158,7 @@ const PostProperty = () => {
   return (
     <div className="container max-w-3xl py-8">
       <h1 className="font-display text-3xl font-bold text-foreground mb-2">Post a Property</h1>
-      <p className="text-muted-foreground mb-8">Fill in the details to list your property on NestIQ.</p>
+      <p className="text-muted-foreground mb-8">Fill in the details to list your property on ApnaGhar.</p>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Listing Type */}
