@@ -36,6 +36,7 @@ const App = () => (
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/post-property" element={<PostProperty />} />
                 <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/emi-calculator" element={<EMICalculator />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>
