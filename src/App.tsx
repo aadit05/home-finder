@@ -13,6 +13,7 @@ import AIEstimator from "./pages/AIEstimator";
 import Auth from "./pages/Auth";
 import PostProperty from "./pages/PostProperty";
 import AdminDashboard from "./pages/AdminDashboard";
+import EMICalculator from "./pages/EMICalculator";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +36,7 @@ const App = () => (
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/post-property" element={<PostProperty />} />
                 <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/emi-calculator" element={<EMICalculator />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>
