@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import {
   Search, Brain, TrendingUp, Shield, ArrowRight, Building2, MapPin,
   Home, Key, Heart, Eye, ChevronRight, Calculator, BarChart3,
-  Landmark, Building, Trees, Store, Warehouse,
+  Landmark, Building, Trees, Store, Warehouse, User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

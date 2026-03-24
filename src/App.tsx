@@ -13,6 +13,7 @@ import AIEstimator from "./pages/AIEstimator";
 import Auth from "./pages/Auth";
 import PostProperty from "./pages/PostProperty";
 import AdminDashboard from "./pages/AdminDashboard";
+import EMICalculator from "./pages/EMICalculator";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
