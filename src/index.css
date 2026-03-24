@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,35 +6,35 @@
 
 @layer base {
   :root {
-    --background: 40 20% 98%;
-    --foreground: 220 25% 10%;
+    --background: 210 20% 98%;
+    --foreground: 215 25% 12%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 25% 10%;
+    --card-foreground: 215 25% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 25% 10%;
+    --popover-foreground: 215 25% 12%;
 
-    --primary: 220 40% 13%;
-    --primary-foreground: 40 30% 96%;
+    --primary: 213 72% 30%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 40 30% 94%;
-    --secondary-foreground: 220 25% 10%;
+    --secondary: 210 20% 96%;
+    --secondary-foreground: 215 25% 12%;
 
-    --muted: 40 15% 94%;
-    --muted-foreground: 220 10% 46%;
+    --muted: 210 15% 94%;
+    --muted-foreground: 215 10% 46%;
 
-    --accent: 36 80% 50%;
+    --accent: 4 85% 55%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 40 15% 89%;
-    --input: 40 15% 89%;
-    --ring: 220 40% 13%;
+    --border: 210 15% 90%;
+    --input: 210 15% 90%;
+    --ring: 213 72% 30%;
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;
 
     --ai: 200 80% 50%;
     --ai-foreground: 0 0% 100%;
@@ -44,11 +44,14 @@
     --success-foreground: 0 0% 100%;
 
     --warning: 36 90% 55%;
-    --warning-foreground: 220 25% 10%;
+    --warning-foreground: 215 25% 12%;
 
-    --hero-overlay: linear-gradient(135deg, hsla(220, 40%, 13%, 0.85), hsla(220, 30%, 20%, 0.6));
-    --shadow-card: 0 4px 24px -4px hsla(220, 40%, 13%, 0.08);
-    --shadow-elevated: 0 12px 40px -8px hsla(220, 40%, 13%, 0.15);
+    --nav-bg: 213 72% 24%;
+    --nav-foreground: 0 0% 100%;
+
+    --hero-overlay: linear-gradient(135deg, hsla(213, 72%, 24%, 0.9), hsla(213, 60%, 30%, 0.7));
+    --shadow-card: 0 2px 12px -2px hsla(215, 25%, 12%, 0.08);
+    --shadow-elevated: 0 8px 30px -6px hsla(215, 25%, 12%, 0.15);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -59,30 +62,32 @@
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
 
-    --font-display: 'Playfair Display', serif;
+    --font-display: 'Inter', sans-serif;
     --font-body: 'DM Sans', sans-serif;
   }
 
   .dark {
-    --background: 220 25% 6%;
-    --foreground: 40 20% 95%;
-    --card: 220 25% 9%;
-    --card-foreground: 40 20% 95%;
-    --popover: 220 25% 9%;
-    --popover-foreground: 40 20% 95%;
-    --primary: 40 30% 90%;
-    --primary-foreground: 220 40% 13%;
-    --secondary: 220 20% 15%;
-    --secondary-foreground: 40 20% 95%;
-    --muted: 220 20% 15%;
-    --muted-foreground: 220 10% 60%;
-    --accent: 36 80% 50%;
+    --background: 215 25% 6%;
+    --foreground: 210 20% 95%;
+    --card: 215 25% 9%;
+    --card-foreground: 210 20% 95%;
+    --popover: 215 25% 9%;
+    --popover-foreground: 210 20% 95%;
+    --primary: 213 72% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 215 20% 15%;
+    --secondary-foreground: 210 20% 95%;
+    --muted: 215 20% 15%;
+    --muted-foreground: 215 10% 60%;
+    --accent: 4 85% 55%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 62% 30%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 20% 18%;
-    --input: 220 20% 18%;
-    --ring: 40 30% 80%;
+    --border: 215 20% 18%;
+    --input: 215 20% 18%;
+    --ring: 213 72% 50%;
+    --nav-bg: 215 25% 9%;
+    --nav-foreground: 210 20% 95%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -112,7 +117,7 @@
 @layer utilities {
   .text-gradient-accent {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(36 80% 50%), hsl(30 90% 55%));
+    background-image: linear-gradient(135deg, hsl(4 85% 55%), hsl(20 90% 50%));
   }
 
   .bg-hero-overlay {
