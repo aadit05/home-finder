@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import SearchFilters, { type Filters } from "@/components/SearchFilters";
 import PropertyCard from "@/components/PropertyCard";
+import PropertyCardSkeleton from "@/components/PropertyCardSkeleton";
 import { seedProperties, type Property } from "@/lib/mockData";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -9,16 +10,22 @@ const Properties = () => {
   const [searchParams] = useSearchParams();
   const initialCity = searchParams.get("city") || "";
   const initialType = searchParams.get("type") || "";
+  const initialPropertyType = searchParams.get("propertyType") || "";
+  const initialSearch = searchParams.get("search") || "";
 
   const [filters, setFilters] = useState<Filters>({
-    search: "",
+    search: initialSearch,
     listingType: initialType,
     city: initialCity,
-    propertyType: "",
+    propertyType: initialPropertyType,
     bhk: "",
     minPrice: "",
     maxPrice: "",
     sortBy: "newest",
+    constructionStatus: "",
+    postedBy: "",
+    furnishing: "",
+    amenities: [],
   });
 
   const [dbProperties, setDbProperties] = useState<Property[]>([]);
@@ -47,7 +54,6 @@ const Properties = () => {
     fetchProperties();
   }, []);
 
-  // Use DB properties if available, otherwise seed
   const allProperties = dbProperties.length > 0 ? dbProperties : seedProperties;
 
   const filtered = useMemo(() => {
@@ -68,11 +74,18 @@ const Properties = () => {
     if (filters.bhk) result = result.filter((p) => p.bhk === Number(filters.bhk));
     if (filters.minPrice) result = result.filter((p) => p.price >= Number(filters.minPrice));
     if (filters.maxPrice) result = result.filter((p) => p.price <= Number(filters.maxPrice));
+    if (filters.furnishing) result = result.filter((p) => p.furnishing_status === filters.furnishing);
+    if (filters.amenities && filters.amenities.length > 0) {
+      result = result.filter((p) =>
+        filters.amenities.every((a) => p.amenities.includes(a))
+      );
+    }
 
     switch (filters.sortBy) {
       case "price-low": result.sort((a, b) => a.price - b.price); break;
       case "price-high": result.sort((a, b) => b.price - a.price); break;
       case "ai-score": result.sort((a, b) => (b.ai_score || 0) - (a.ai_score || 0)); break;
+      case "area-high": result.sort((a, b) => b.area_sqft - a.area_sqft); break;
       default: result.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
     }
 
@@ -88,13 +101,19 @@ const Properties = () => {
         </p>
       </div>
 
-      <SearchFilters filters={filters} onChange={setFilters} />
+      <SearchFilters filters={filters} onChange={setFilters} resultCount={loading ? undefined : filtered.length} />
 
-      <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {filtered.map((p) => (
-          <PropertyCard key={p.id} property={p} />
-        ))}
-      </div>
+      {loading ? (
+        <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => <PropertyCardSkeleton key={i} />)}
+        </div>
+      ) : (
+        <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {filtered.map((p) => (
+            <PropertyCard key={p.id} property={p} />
+          ))}
+        </div>
+      )}
 
       {!loading && filtered.length === 0 && (
         <div className="mt-16 text-center">
