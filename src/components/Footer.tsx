@@ -1,4 +1,4 @@
-import { Building2, MapPin, Phone, Mail } from "lucide-react";
+import { Building2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Footer = () => (
@@ -15,13 +15,23 @@ const Footer = () => (
           <p className="text-sm opacity-60 leading-relaxed max-w-xs">
             India's smartest real estate platform powered by AI. Buy, rent, or sell properties with intelligent price predictions and smart recommendations.
           </p>
+          <p className="text-xs opacity-40 mt-3">Contact us toll free on<br />1800 41 99099 (9AM–11PM IST)</p>
         </div>
         <div>
-          <h4 className="mb-3 text-sm font-semibold uppercase tracking-wider opacity-60">For Buyers</h4>
+          <h4 className="mb-3 text-sm font-semibold uppercase tracking-wider opacity-60">Buy a Home</h4>
           <div className="flex flex-col gap-1.5 text-sm">
-            <Link to="/properties?type=sale" className="opacity-60 hover:opacity-100 transition-opacity">Buy Property</Link>
+            <Link to="/properties?type=sale&propertyType=flat" className="opacity-60 hover:opacity-100 transition-opacity">Flat/Apartment</Link>
+            <Link to="/properties?type=sale&propertyType=villa" className="opacity-60 hover:opacity-100 transition-opacity">Villa</Link>
+            <Link to="/properties?type=sale&propertyType=plot" className="opacity-60 hover:opacity-100 transition-opacity">Plots/Land</Link>
+            <Link to="/properties?type=sale&propertyType=commercial" className="opacity-60 hover:opacity-100 transition-opacity">Commercial</Link>
+          </div>
+        </div>
+        <div>
+          <h4 className="mb-3 text-sm font-semibold uppercase tracking-wider opacity-60">Rent a Home</h4>
+          <div className="flex flex-col gap-1.5 text-sm">
             <Link to="/properties?type=rent" className="opacity-60 hover:opacity-100 transition-opacity">Rent Property</Link>
-            <Link to="/emi-calculator" className="opacity-60 hover:opacity-100 transition-opacity">EMI Calculator</Link>
+            <Link to="/properties?type=rent&furnishing=furnished" className="opacity-60 hover:opacity-100 transition-opacity">PG / Co-living</Link>
+            <Link to="/insights" className="opacity-60 hover:opacity-100 transition-opacity">Locality Insights</Link>
             <Link to="/ai-estimator" className="opacity-60 hover:opacity-100 transition-opacity">AI Price Estimator</Link>
           </div>
         </div>
@@ -29,17 +39,13 @@ const Footer = () => (
           <h4 className="mb-3 text-sm font-semibold uppercase tracking-wider opacity-60">For Owners</h4>
           <div className="flex flex-col gap-1.5 text-sm">
             <Link to="/post-property" className="opacity-60 hover:opacity-100 transition-opacity">Post Property FREE</Link>
-            <Link to="/properties" className="opacity-60 hover:opacity-100 transition-opacity">Property Insights</Link>
+            <Link to="/emi-calculator" className="opacity-60 hover:opacity-100 transition-opacity">EMI Calculator</Link>
             <Link to="/ai-estimator" className="opacity-60 hover:opacity-100 transition-opacity">Know Property Value</Link>
           </div>
-        </div>
-        <div>
-          <h4 className="mb-3 text-sm font-semibold uppercase tracking-wider opacity-60">Top Cities</h4>
+          <h4 className="mb-2 mt-4 text-sm font-semibold uppercase tracking-wider opacity-60">Top Cities</h4>
           <div className="flex flex-col gap-1.5 text-sm">
-            {["Mumbai", "Bangalore", "Delhi", "Pune", "Hyderabad", "Chennai"].map((city) => (
-              <Link key={city} to={`/properties?city=${city}`} className="opacity-60 hover:opacity-100 transition-opacity">
-                Properties in {city}
-              </Link>
+            {["Mumbai", "Bangalore", "Delhi", "Pune", "Hyderabad"].map((city) => (
+              <Link key={city} to={`/properties?city=${city}`} className="opacity-60 hover:opacity-100 transition-opacity">{city}</Link>
             ))}
           </div>
         </div>
