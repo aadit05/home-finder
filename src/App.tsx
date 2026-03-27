@@ -14,6 +14,9 @@ import Auth from "./pages/Auth";
 import PostProperty from "./pages/PostProperty";
 import AdminDashboard from "./pages/AdminDashboard";
 import EMICalculator from "./pages/EMICalculator";
+import SavedProperties from "./pages/SavedProperties";
+import CompareProperties from "./pages/CompareProperties";
+import LocalityInsights from "./pages/LocalityInsights";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -37,6 +40,9 @@ const App = () => (
                 <Route path="/post-property" element={<PostProperty />} />
                 <Route path="/admin" element={<AdminDashboard />} />
                 <Route path="/emi-calculator" element={<EMICalculator />} />
+                <Route path="/saved" element={<SavedProperties />} />
+                <Route path="/compare" element={<CompareProperties />} />
+                <Route path="/insights" element={<LocalityInsights />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>
