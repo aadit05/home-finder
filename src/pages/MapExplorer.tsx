@@ -168,7 +168,7 @@ const MapExplorer = () => {
                 <X className="h-4 w-4 text-muted-foreground" />
               </button>
               <div className="flex gap-3">
-                <img src={getPropertyImage(selectedProperty.images, 0)} alt="" className="w-20 h-16 rounded-md object-cover" />
+                <img src={getPropertyImage(selectedProperty.images, selectedProperty.property_type, 0)} alt="" className="w-20 h-16 rounded-md object-cover" />
                 <div>
                   <p className="font-semibold text-sm">{selectedProperty.title}</p>
                   <p className="text-xs text-muted-foreground">{selectedProperty.locality}, {selectedProperty.city}</p>
