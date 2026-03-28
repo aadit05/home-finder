@@ -315,6 +315,7 @@ const Navbar = () => {
               { to: "/emi-calculator", label: "EMI Calculator", icon: Calculator },
               { to: "/saved", label: "Saved Properties", icon: Bookmark },
               { to: "/compare", label: "Compare", icon: GitCompare },
+              { to: "/map", label: "Map View", icon: MapPin },
             ].map((l) => (
               <Link key={l.to} to={l.to} onClick={() => setMobileOpen(false)}
                 className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-white/80 hover:bg-white/10 hover:text-white">
