@@ -17,6 +17,7 @@ import EMICalculator from "./pages/EMICalculator";
 import SavedProperties from "./pages/SavedProperties";
 import CompareProperties from "./pages/CompareProperties";
 import LocalityInsights from "./pages/LocalityInsights";
+import MapExplorer from "./pages/MapExplorer";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -43,6 +44,7 @@ const App = () => (
                 <Route path="/saved" element={<SavedProperties />} />
                 <Route path="/compare" element={<CompareProperties />} />
                 <Route path="/insights" element={<LocalityInsights />} />
+                <Route path="/map" element={<MapExplorer />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>

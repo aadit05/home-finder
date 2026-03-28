@@ -193,7 +193,7 @@ const Navbar = () => {
 
           <div className="hidden md:flex items-center gap-1">
             <Link to="/post-property">
-              <Button size="sm" variant="outline" className="gap-1.5 border-white/40 text-white hover:bg-white/10 hover:text-white font-semibold text-xs">
+              <Button size="sm" variant="outline" className="gap-1.5 border-white/40 text-white hover:bg-white/10 hover:text-white font-semibold text-xs whitespace-nowrap">
                 <Plus className="h-3.5 w-3.5" /> Post Property
                 <span className="ml-1 rounded bg-success px-1.5 py-0.5 text-[10px] font-bold text-success-foreground">FREE</span>
               </Button>
@@ -282,6 +282,9 @@ const Navbar = () => {
           <Link to="/emi-calculator" className="flex items-center gap-1.5 px-4 h-full font-medium text-foreground hover:text-primary border-b-2 border-transparent hover:border-primary transition-colors -mb-px">
             <Calculator className="h-3.5 w-3.5" /> EMI Calculator
           </Link>
+          <Link to="/map" className="flex items-center gap-1.5 px-4 h-full font-medium text-foreground hover:text-primary border-b-2 border-transparent hover:border-primary transition-colors -mb-px">
+            <MapPin className="h-3.5 w-3.5" /> Map View
+          </Link>
         </div>
 
         {/* Mega menu dropdowns */}
@@ -312,6 +315,7 @@ const Navbar = () => {
               { to: "/emi-calculator", label: "EMI Calculator", icon: Calculator },
               { to: "/saved", label: "Saved Properties", icon: Bookmark },
               { to: "/compare", label: "Compare", icon: GitCompare },
+              { to: "/map", label: "Map View", icon: MapPin },
             ].map((l) => (
               <Link key={l.to} to={l.to} onClick={() => setMobileOpen(false)}
                 className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-white/80 hover:bg-white/10 hover:text-white">
