@@ -17,6 +17,7 @@ import EMICalculator from "./pages/EMICalculator";
 import SavedProperties from "./pages/SavedProperties";
 import CompareProperties from "./pages/CompareProperties";
 import LocalityInsights from "./pages/LocalityInsights";
+import MapExplorer from "./pages/MapExplorer";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
