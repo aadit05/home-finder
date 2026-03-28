@@ -193,7 +193,7 @@ const Navbar = () => {
 
           <div className="hidden md:flex items-center gap-1">
             <Link to="/post-property">
-              <Button size="sm" variant="outline" className="gap-1.5 border-white/40 text-white hover:bg-white/10 hover:text-white font-semibold text-xs">
+              <Button size="sm" variant="outline" className="gap-1.5 border-white/40 text-white hover:bg-white/10 hover:text-white font-semibold text-xs whitespace-nowrap">
                 <Plus className="h-3.5 w-3.5" /> Post Property
                 <span className="ml-1 rounded bg-success px-1.5 py-0.5 text-[10px] font-bold text-success-foreground">FREE</span>
               </Button>
