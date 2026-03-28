@@ -44,7 +44,7 @@ const cityCoords: Record<string, [number, number]> = {
 };
 
 const getPropertyCoords = (p: Property): [number, number] => {
-  if (p.latitude && p.longitude) return [p.latitude, p.longitude];
+  if ((p as any).latitude && (p as any).longitude) return [(p as any).latitude, (p as any).longitude];
   const base = cityCoords[p.city] || [20.5937, 78.9629];
   const hash = p.id.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
   return [base[0] + (hash % 100 - 50) * 0.005, base[1] + ((hash * 7) % 100 - 50) * 0.005];
