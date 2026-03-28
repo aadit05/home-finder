@@ -282,6 +282,9 @@ const Navbar = () => {
           <Link to="/emi-calculator" className="flex items-center gap-1.5 px-4 h-full font-medium text-foreground hover:text-primary border-b-2 border-transparent hover:border-primary transition-colors -mb-px">
             <Calculator className="h-3.5 w-3.5" /> EMI Calculator
           </Link>
+          <Link to="/map" className="flex items-center gap-1.5 px-4 h-full font-medium text-foreground hover:text-primary border-b-2 border-transparent hover:border-primary transition-colors -mb-px">
+            <MapPin className="h-3.5 w-3.5" /> Map View
+          </Link>
         </div>
 
         {/* Mega menu dropdowns */}

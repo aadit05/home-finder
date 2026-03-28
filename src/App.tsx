@@ -44,6 +44,7 @@ const App = () => (
                 <Route path="/saved" element={<SavedProperties />} />
                 <Route path="/compare" element={<CompareProperties />} />
                 <Route path="/insights" element={<LocalityInsights />} />
+                <Route path="/map" element={<MapExplorer />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>
