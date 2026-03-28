@@ -110,7 +110,7 @@ const MapExplorer = () => {
               }`}
             >
               <img
-                src={getPropertyImage(p.images, 0)}
+                src={getPropertyImage(p.images, p.property_type, 0)}
                 alt={p.title}
                 className="w-20 h-16 rounded-md object-cover shrink-0"
                 loading="lazy"
