@@ -147,11 +147,11 @@ const MapExplorer = () => {
                 >
                   <Popup>
                     <div className="w-48">
-                      <img src={getPropertyImage(p.images, 0)} alt={p.title} className="w-full h-24 object-cover rounded-md mb-2" />
+                      <img src={getPropertyImage(p.images, p.property_type, 0)} alt={p.title} className="w-full h-24 object-cover rounded-md mb-2" />
                       <p className="font-semibold text-sm">{p.title}</p>
-                      <p className="text-xs text-gray-500">{p.locality}, {p.city}</p>
+                      <p className="text-xs text-muted-foreground">{p.locality}, {p.city}</p>
                       <p className="font-bold text-sm mt-1">{formatPrice(p.price)}</p>
-                      <Link to={`/property/${p.id}`} className="text-xs text-blue-600 hover:underline mt-1 block">
+                      <Link to={`/property/${p.id}`} className="text-xs text-primary hover:underline mt-1 block">
                         View Details →
                       </Link>
                     </div>
