@@ -12,7 +12,7 @@ const Properties = () => {
   const [searchParams] = useSearchParams();
   const [layout, setLayout] = useState<"grid" | "list">("grid");
 
-  const [filters, setFilters] = useState<Filters>({
+  const buildFiltersFromParams = () => ({
     search: searchParams.get("search") || "",
     listingType: searchParams.get("type") || "",
     city: searchParams.get("city") || "",
@@ -20,12 +20,19 @@ const Properties = () => {
     bhk: searchParams.get("bhk") || "",
     minPrice: searchParams.get("minPrice") || "",
     maxPrice: searchParams.get("maxPrice") || "",
-    sortBy: "newest",
+    sortBy: "newest" as const,
     constructionStatus: searchParams.get("constructionStatus") || "",
     postedBy: "",
     furnishing: searchParams.get("furnishing") || "",
-    amenities: [],
+    amenities: [] as string[],
   });
+
+  const [filters, setFilters] = useState<Filters>(buildFiltersFromParams);
+
+  // Sync filters when URL search params change
+  useEffect(() => {
+    setFilters(buildFiltersFromParams());
+  }, [searchParams]);
 
   const [dbProperties, setDbProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
