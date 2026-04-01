@@ -81,6 +81,12 @@ const Properties = () => {
     return result;
   }, [filters, allProperties]);
 
+  const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
+  const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+
+  // Reset page when filters change
+  useEffect(() => { setPage(1); }, [filters]);
+
   return (
     <div className="container py-8">
       <div className="mb-6 flex items-end justify-between">
