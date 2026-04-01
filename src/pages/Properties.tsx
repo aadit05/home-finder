@@ -11,6 +11,8 @@ import { supabase } from "@/integrations/supabase/client";
 const Properties = () => {
   const [searchParams] = useSearchParams();
   const [layout, setLayout] = useState<"grid" | "list">("grid");
+  const [page, setPage] = useState(1);
+  const ITEMS_PER_PAGE = 18;
 
   const buildFiltersFromParams = () => ({
     search: searchParams.get("search") || "",
@@ -79,6 +81,12 @@ const Properties = () => {
     return result;
   }, [filters, allProperties]);
 
+  const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
+  const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+
+  // Reset page when filters change
+  useEffect(() => { setPage(1); }, [filters]);
+
   return (
     <div className="container py-8">
       <div className="mb-6 flex items-end justify-between">
@@ -104,11 +112,36 @@ const Properties = () => {
         </div>
       ) : layout === "list" ? (
         <div className="mt-6 space-y-4">
-          {filtered.map((p) => <PropertyCard key={p.id} property={p} layout="list" />)}
+          {paginated.map((p) => <PropertyCard key={p.id} property={p} layout="list" />)}
         </div>
       ) : (
         <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((p) => <PropertyCard key={p.id} property={p} />)}
+          {paginated.map((p) => <PropertyCard key={p.id} property={p} />)}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {!loading && filtered.length > 0 && (
+        <div className="mt-8 flex items-center justify-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={page === 1}
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+          >
+            Previous
+          </Button>
+          <span className="text-sm text-muted-foreground px-3">
+            Page {page} of {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={page === totalPages}
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+          >
+            Next
+          </Button>
         </div>
       )}
 

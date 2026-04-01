@@ -37,11 +37,19 @@ const PropertyDetail = () => {
           images: data.images || [],
         };
         setProperty(mapped);
+        // AI-powered similar: same city + type, sorted by closest price
+        const priceMin = Math.round(data.price * 0.5);
+        const priceMax = Math.round(data.price * 1.5);
         const { data: simData } = await supabase
           .from("properties").select("*").neq("id", id!)
-          .or(`city.eq.${data.city},property_type.eq.${data.property_type}`)
-          .eq("status", "active").limit(3);
-        setSimilar((simData || []).map((p) => ({ ...p, amenities: Array.isArray(p.amenities) ? p.amenities as string[] : [], images: p.images || [] })));
+          .eq("city", data.city)
+          .eq("listing_type", data.listing_type)
+          .gte("price", priceMin)
+          .lte("price", priceMax)
+          .eq("status", "active").limit(6);
+        const similarMapped = (simData || []).map((p) => ({ ...p, amenities: Array.isArray(p.amenities) ? p.amenities as string[] : [], images: p.images || [] }));
+        similarMapped.sort((a, b) => Math.abs(a.price - data.price) - Math.abs(b.price - data.price));
+        setSimilar(similarMapped.slice(0, 3));
       } else {
         const seed = seedProperties.find((p) => p.id === id);
         setProperty(seed || null);

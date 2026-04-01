@@ -6,8 +6,8 @@ import {
   Landmark, Building, Trees, Store, Warehouse, User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import SearchAutocomplete from "@/components/SearchAutocomplete";
 import PropertyCard from "@/components/PropertyCard";
 import { seedProperties, cities, formatPrice } from "@/lib/mockData";
 import { supabase } from "@/integrations/supabase/client";
@@ -115,15 +115,7 @@ const Index = () => {
                     {cities.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
                   </SelectContent>
                 </Select>
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search by locality, project, or landmark..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
+                <SearchAutocomplete value={searchQuery} onChange={setSearchQuery} />
                 <Button type="submit" className="gap-2 px-6">
                   <Search className="h-4 w-4" />
                   Search
