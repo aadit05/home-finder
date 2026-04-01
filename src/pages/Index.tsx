@@ -6,8 +6,8 @@ import {
   Landmark, Building, Trees, Store, Warehouse, User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import SearchAutocomplete from "@/components/SearchAutocomplete";
 import PropertyCard from "@/components/PropertyCard";
 import { seedProperties, cities, formatPrice } from "@/lib/mockData";
 import { supabase } from "@/integrations/supabase/client";
