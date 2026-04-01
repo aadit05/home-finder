@@ -112,11 +112,11 @@ const Properties = () => {
         </div>
       ) : layout === "list" ? (
         <div className="mt-6 space-y-4">
-          {filtered.map((p) => <PropertyCard key={p.id} property={p} layout="list" />)}
+          {paginated.map((p) => <PropertyCard key={p.id} property={p} layout="list" />)}
         </div>
       ) : (
         <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((p) => <PropertyCard key={p.id} property={p} />)}
+          {paginated.map((p) => <PropertyCard key={p.id} property={p} />)}
         </div>
       )}
 
