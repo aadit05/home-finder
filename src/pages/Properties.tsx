@@ -112,6 +112,31 @@ const Properties = () => {
         </div>
       )}
 
+      {/* Pagination */}
+      {!loading && filtered.length > 0 && (
+        <div className="mt-8 flex items-center justify-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={page === 1}
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+          >
+            Previous
+          </Button>
+          <span className="text-sm text-muted-foreground px-3">
+            Page {page} of {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={page === totalPages}
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+          >
+            Next
+          </Button>
+        </div>
+      )}
+
       {!loading && filtered.length === 0 && (
         <div className="mt-16 text-center">
           <p className="text-lg text-muted-foreground">No properties match your criteria.</p>
