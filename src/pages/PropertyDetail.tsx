@@ -47,10 +47,9 @@ const PropertyDetail = () => {
           .gte("price", priceMin)
           .lte("price", priceMax)
           .eq("status", "active").limit(6);
-        const mapped = (simData || []).map((p) => ({ ...p, amenities: Array.isArray(p.amenities) ? p.amenities as string[] : [], images: p.images || [] }));
-        // Sort by closest price
-        mapped.sort((a, b) => Math.abs(a.price - data.price) - Math.abs(b.price - data.price));
-        setSimilar(mapped.slice(0, 3));
+        const similarMapped = (simData || []).map((p) => ({ ...p, amenities: Array.isArray(p.amenities) ? p.amenities as string[] : [], images: p.images || [] }));
+        similarMapped.sort((a, b) => Math.abs(a.price - data.price) - Math.abs(b.price - data.price));
+        setSimilar(similarMapped.slice(0, 3));
       } else {
         const seed = seedProperties.find((p) => p.id === id);
         setProperty(seed || null);
