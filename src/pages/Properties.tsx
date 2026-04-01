@@ -11,6 +11,8 @@ import { supabase } from "@/integrations/supabase/client";
 const Properties = () => {
   const [searchParams] = useSearchParams();
   const [layout, setLayout] = useState<"grid" | "list">("grid");
+  const [page, setPage] = useState(1);
+  const ITEMS_PER_PAGE = 18;
 
   const buildFiltersFromParams = () => ({
     search: searchParams.get("search") || "",
