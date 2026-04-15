@@ -50,7 +50,21 @@ const getPropertyCoords = (p: Property): [number, number] => {
   if ((p as any).latitude && (p as any).longitude) return [(p as any).latitude, (p as any).longitude];
   const base = cityCoords[p.city] || [20.5937, 78.9629];
   const hash = p.id.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
-  return [base[0] + (hash % 100 - 50) * 0.005, base[1] + ((hash * 7) % 100 - 50) * 0.005];
+  // Keep markers within ~4km of city center
+  return [base[0] + (hash % 100 - 50) * 0.0008, base[1] + ((hash * 7) % 100 - 50) * 0.0008];
+};
+
+// Auto-fly to city when filter changes
+const FlyToCity = ({ city }: { city: string }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (city !== "all" && cityCoords[city]) {
+      map.flyTo(cityCoords[city], 12, { duration: 1.2 });
+    } else {
+      map.flyTo([20.5937, 78.9629], 5, { duration: 1.2 });
+    }
+  }, [city, map]);
+  return null;
 };
 
 const MapExplorer = () => {
