@@ -57,6 +57,11 @@ const MapExplorer = () => {
   const [dbProperties, setDbProperties] = useState<Property[]>([]);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [listingType, setListingType] = useState<"all" | "sale" | "rent">("all");
+  const [propertyType, setPropertyType] = useState<string>("all");
+  const [bhk, setBhk] = useState<string>("all");
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 500000000]);
+  const [city, setCity] = useState<string>("all");
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   useEffect(() => {
     const fetch = async () => {
@@ -73,19 +78,49 @@ const MapExplorer = () => {
   }, []);
 
   const allProperties = dbProperties.length > 0 ? dbProperties : seedProperties;
+
+  const cities = useMemo(() => {
+    const set = new Set(allProperties.map((p) => p.city));
+    return Array.from(set).sort();
+  }, [allProperties]);
+
   const filtered = useMemo(() => {
-    if (listingType === "all") return allProperties;
-    return allProperties.filter((p) => p.listing_type === listingType);
-  }, [allProperties, listingType]);
+    return allProperties.filter((p) => {
+      if (listingType !== "all" && p.listing_type !== listingType) return false;
+      if (propertyType !== "all" && p.property_type !== propertyType) return false;
+      if (bhk !== "all" && p.bhk !== Number(bhk)) return false;
+      if (p.price < priceRange[0] || p.price > priceRange[1]) return false;
+      if (city !== "all" && p.city !== city) return false;
+      return true;
+    });
+  }, [allProperties, listingType, propertyType, bhk, priceRange, city]);
+
+  const resetFilters = () => {
+    setListingType("all");
+    setPropertyType("all");
+    setBhk("all");
+    setPriceRange([0, 500000000]);
+    setCity("all");
+  };
+
+  const activeFilterCount = [
+    listingType !== "all",
+    propertyType !== "all",
+    bhk !== "all",
+    priceRange[0] > 0 || priceRange[1] < 500000000,
+    city !== "all",
+  ].filter(Boolean).length;
 
   return (
     <div className="flex flex-col h-[calc(100vh-6rem)]">
       {/* Toolbar */}
-      <div className="border-b bg-card px-4 py-2 flex items-center gap-3 shrink-0">
+      <div className="border-b bg-card px-4 py-2 flex items-center gap-3 shrink-0 flex-wrap">
         <h1 className="font-display text-lg font-bold text-foreground flex items-center gap-2">
           <MapPin className="h-5 w-5 text-primary" /> Map Explorer
         </h1>
-        <div className="flex items-center gap-1 ml-4 rounded-lg border bg-background p-0.5">
+
+        {/* Listing type toggle */}
+        <div className="flex items-center gap-1 ml-2 rounded-lg border bg-background p-0.5">
           {(["all", "sale", "rent"] as const).map((t) => (
             <button
               key={t}
@@ -98,6 +133,127 @@ const MapExplorer = () => {
             </button>
           ))}
         </div>
+
+        {/* Quick filters - desktop */}
+        <div className="hidden lg:flex items-center gap-2">
+          <Select value={city} onValueChange={setCity}>
+            <SelectTrigger className="h-8 w-[130px] text-xs">
+              <SelectValue placeholder="City" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Cities</SelectItem>
+              {cities.map((c) => (
+                <SelectItem key={c} value={c}>{c}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={propertyType} onValueChange={setPropertyType}>
+            <SelectTrigger className="h-8 w-[120px] text-xs">
+              <SelectValue placeholder="Type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Types</SelectItem>
+              <SelectItem value="flat">Flat</SelectItem>
+              <SelectItem value="villa">Villa</SelectItem>
+              <SelectItem value="plot">Plot</SelectItem>
+              <SelectItem value="commercial">Commercial</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={bhk} onValueChange={setBhk}>
+            <SelectTrigger className="h-8 w-[100px] text-xs">
+              <SelectValue placeholder="BHK" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All BHK</SelectItem>
+              {[1, 2, 3, 4, 5].map((b) => (
+                <SelectItem key={b} value={String(b)}>{b} BHK</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className="flex items-center gap-1 h-8 px-3 rounded-md border bg-background text-xs text-muted-foreground hover:text-foreground transition-colors">
+                Price <ChevronDown className="h-3 w-3" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-72">
+              <p className="text-sm font-semibold mb-3">Price Range</p>
+              <Slider
+                min={0}
+                max={500000000}
+                step={500000}
+                value={priceRange}
+                onValueChange={(v) => setPriceRange(v as [number, number])}
+              />
+              <div className="flex justify-between text-xs text-muted-foreground mt-2">
+                <span>{formatPrice(priceRange[0])}</span>
+                <span>{formatPrice(priceRange[1])}</span>
+              </div>
+            </PopoverContent>
+          </Popover>
+
+          {activeFilterCount > 0 && (
+            <button onClick={resetFilters} className="text-xs text-destructive hover:underline">
+              Clear ({activeFilterCount})
+            </button>
+          )}
+        </div>
+
+        {/* Mobile filter button */}
+        <Popover open={filtersOpen} onOpenChange={setFiltersOpen}>
+          <PopoverTrigger asChild>
+            <button className="lg:hidden flex items-center gap-1 h-8 px-3 rounded-md border bg-background text-xs font-medium relative">
+              <SlidersHorizontal className="h-3.5 w-3.5" /> Filters
+              {activeFilterCount > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 bg-primary text-primary-foreground text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="w-72 space-y-3">
+            <p className="text-sm font-semibold">Filters</p>
+            <Select value={city} onValueChange={setCity}>
+              <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="City" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Cities</SelectItem>
+                {cities.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <Select value={propertyType} onValueChange={setPropertyType}>
+              <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="Type" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="flat">Flat</SelectItem>
+                <SelectItem value="villa">Villa</SelectItem>
+                <SelectItem value="plot">Plot</SelectItem>
+                <SelectItem value="commercial">Commercial</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={bhk} onValueChange={setBhk}>
+              <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="BHK" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All BHK</SelectItem>
+                {[1, 2, 3, 4, 5].map((b) => <SelectItem key={b} value={String(b)}>{b} BHK</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <div>
+              <p className="text-xs text-muted-foreground mb-2">Price Range</p>
+              <Slider min={0} max={500000000} step={500000} value={priceRange} onValueChange={(v) => setPriceRange(v as [number, number])} />
+              <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                <span>{formatPrice(priceRange[0])}</span>
+                <span>{formatPrice(priceRange[1])}</span>
+              </div>
+            </div>
+            {activeFilterCount > 0 && (
+              <button onClick={resetFilters} className="text-xs text-destructive hover:underline">Clear all filters</button>
+            )}
+          </PopoverContent>
+        </Popover>
+
         <span className="text-sm text-muted-foreground ml-auto">{filtered.length} properties</span>
       </div>
 
