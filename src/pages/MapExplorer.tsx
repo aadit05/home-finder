@@ -1,6 +1,9 @@
 import { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { MapPin, List, LayoutGrid, Building2, X } from "lucide-react";
+import { MapPin, X, SlidersHorizontal, ChevronDown } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
