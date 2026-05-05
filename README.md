@@ -10,8 +10,6 @@ This project is built with:
 
 
 
-(https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) 
-
 
 
 Yes, you can!
