@@ -283,7 +283,7 @@ const MapExplorer = () => {
               }`}
             >
               <img
-                src={getPropertyImage(p.images, p.property_type, 0)}
+                src={getPropertyImage(p.images, p.property_type, 0, p.id, p.city)}
                 alt={p.title}
                 className="w-20 h-16 rounded-md object-cover shrink-0"
                 loading="lazy"
@@ -321,7 +321,7 @@ const MapExplorer = () => {
                 >
                   <Popup>
                     <div className="w-48">
-                      <img src={getPropertyImage(p.images, p.property_type, 0)} alt={p.title} className="w-full h-24 object-cover rounded-md mb-2" />
+                      <img src={getPropertyImage(p.images, p.property_type, 0, p.id, p.city)} alt={p.title} className="w-full h-24 object-cover rounded-md mb-2" />
                       <p className="font-semibold text-sm">{p.title}</p>
                       <p className="text-xs text-muted-foreground">{p.locality}, {p.city}</p>
                       <p className="font-bold text-sm mt-1">{formatPrice(p.price)}</p>
@@ -342,7 +342,7 @@ const MapExplorer = () => {
                 <X className="h-4 w-4 text-muted-foreground" />
               </button>
               <div className="flex gap-3">
-                <img src={getPropertyImage(selectedProperty.images, selectedProperty.property_type, 0)} alt="" className="w-20 h-16 rounded-md object-cover" />
+                <img src={getPropertyImage(selectedProperty.images, selectedProperty.property_type, 0, selectedProperty.id, selectedProperty.city)} alt="" className="w-20 h-16 rounded-md object-cover" />
                 <div>
                   <p className="font-semibold text-sm">{selectedProperty.title}</p>
                   <p className="text-xs text-muted-foreground">{selectedProperty.locality}, {selectedProperty.city}</p>
