@@ -107,7 +107,7 @@ const PropertyDetail = () => {
       <div className="grid gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-6">
           {/* Image Gallery with lightbox */}
-          <ImageGallery images={property.images} propertyType={property.property_type} title={property.title} />
+          <ImageGallery images={property.images} propertyType={property.property_type} title={property.title} seed={property.id} city={property.city} />
 
           {/* Details */}
           <div>
