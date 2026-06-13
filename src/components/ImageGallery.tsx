@@ -1,27 +1,30 @@
 import { useState, useCallback } from "react";
 import { ChevronLeft, ChevronRight, X, ZoomIn } from "lucide-react";
-import { getPropertyImage } from "@/lib/stockImages";
+import { buildGallery, getThumbUrl } from "@/lib/stockImages";
 
 interface Props {
   images: string[];
   propertyType: string;
   title: string;
+  seed?: string;
+  city?: string;
 }
 
-const ImageGallery = ({ images, propertyType, title }: Props) => {
+const ImageGallery = ({ images, propertyType, title, seed, city }: Props) => {
   const [active, setActive] = useState(0);
   const [lightbox, setLightbox] = useState(false);
 
-  const allImages = images.length > 0 ? images : [
-    getPropertyImage(images, propertyType, 0),
-    getPropertyImage(images, propertyType, 1),
-    getPropertyImage(images, propertyType, 2),
-  ];
+  const validUploaded = (images || []).filter(
+    (u) => typeof u === "string" && u && !u.includes("placeholder")
+  );
+  const generated = buildGallery(seed || title || propertyType, propertyType, city, 6);
+  const allImages = validUploaded.length >= 4 ? validUploaded : [...validUploaded, ...generated].slice(0, 8);
 
-  const getImg = (i: number) => getPropertyImage(allImages, propertyType, i);
+  const getImg = (i: number) => allImages[i % allImages.length];
 
   const prev = useCallback(() => setActive((a) => (a - 1 + allImages.length) % allImages.length), [allImages.length]);
   const next = useCallback(() => setActive((a) => (a + 1) % allImages.length), [allImages.length]);
+
 
   return (
     <>
@@ -61,7 +64,7 @@ const ImageGallery = ({ images, propertyType, title }: Props) => {
                 className={`shrink-0 overflow-hidden rounded-lg border-2 transition-all ${i === active ? "border-primary ring-1 ring-primary/30" : "border-transparent opacity-60 hover:opacity-100"}`}
               >
                 <img
-                  src={getImg(i)}
+                  src={getThumbUrl(getImg(i))}
                   alt=""
                   className="h-16 w-24 object-cover"
                   loading="lazy"
