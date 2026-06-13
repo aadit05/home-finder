@@ -16,8 +16,8 @@ const PropertyCard = ({ property, layout = "grid" }: Props) => {
 
   const typeLabels: Record<string, string> = { flat: "Apartment", villa: "Villa", plot: "Plot", commercial: "Commercial" };
   const isRental = property.listing_type === "rent";
-  const imgSrc = getPropertyImage(property.images, property.property_type, imgIdx);
-  const totalImages = Math.max(property.images?.length || 0, 3);
+  const imgSrc = getPropertyImage(property.images, property.property_type, imgIdx, property.id, property.city);
+  const totalImages = Math.max(property.images?.length || 0, 6);
   const pricePerSqft = property.area_sqft > 0 ? Math.round(property.price / property.area_sqft) : null;
   const daysSincePosted = Math.max(1, Math.floor((Date.now() - new Date(property.created_at).getTime()) / 86400000));
 
