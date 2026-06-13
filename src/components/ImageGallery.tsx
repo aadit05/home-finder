@@ -64,7 +64,7 @@ const ImageGallery = ({ images, propertyType, title, seed, city }: Props) => {
                 className={`shrink-0 overflow-hidden rounded-lg border-2 transition-all ${i === active ? "border-primary ring-1 ring-primary/30" : "border-transparent opacity-60 hover:opacity-100"}`}
               >
                 <img
-                  src={getImg(i)}
+                  src={getThumbUrl(getImg(i))}
                   alt=""
                   className="h-16 w-24 object-cover"
                   loading="lazy"
